@@ -4,7 +4,7 @@
 part of spotify;
 
 class Tracks extends EndpointBase {
-  TracksMe _me;
+  TracksMe? _me;
   @override
   String get _path => 'v1/tracks';
 
@@ -12,7 +12,7 @@ class Tracks extends EndpointBase {
     _me = TracksMe(api);
   }
 
-  TracksMe get me => _me;
+  TracksMe? get me => _me;
 
   Future<Track> get(String trackId) async {
     var jsonString = await _api._get('$_path/$trackId');
@@ -54,15 +54,15 @@ class TracksMe extends EndpointPaging {
   }
 
   Future<bool> containsOne(String id) async {
-    var list = await contains([id]);
+    var list = await (contains([id]) as FutureOr<List<bool>>);
     return list.first;
   }
 
-  Future<List<bool>> contains(List<String> ids) async {
+  Future<List<bool>?> contains(List<String> ids) async {
     var limit = ids.length < 50 ? ids.length : 50;
     var idsParam = ids.sublist(0, limit).join(',');
     var jsonString = await _api._get('$_path/contains?ids=$idsParam');
-    List<bool> list = json.decode(jsonString);
+    List<bool>? list = json.decode(jsonString);
     return list;
   }
 

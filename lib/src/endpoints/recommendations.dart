@@ -11,14 +11,14 @@ class RecommendationsEndpoint extends EndpointBase {
   /// [min] [max] and [target] sets Tunable Track attributes limitations
   /// (see https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/)
   Future<Recommendations> get(
-      {Iterable<String> seedArtists,
-      Iterable<String> seedGenres,
-      Iterable<String> seedTracks,
+      {Iterable<String>? seedArtists,
+      Iterable<String>? seedGenres,
+      Iterable<String>? seedTracks,
       int limit = 20,
-      String market,
-      Map<String, num> max,
-      Map<String, num> min,
-      Map<String, num> target}) async {
+      String? market,
+      Map<String, num>? max,
+      Map<String, num>? min,
+      Map<String, num>? target}) async {
     assert(limit >= 1 && limit <= 100, 'limit should be 1 <= limit <= 100');
     final seedsNum = (seedArtists?.length ?? 0) + (seedGenres?.length ?? 0) + (seedTracks?.length ?? 0);
     assert(
@@ -42,7 +42,7 @@ class RecommendationsEndpoint extends EndpointBase {
   /// and [tunableTrackMap] a map of tunable Track Attributes.
   /// adds the attributes to [parameters]
   void _addTunableTrackMap(
-      Map<String, String> parameters, Map<String, num> tunableTrackMap) {
+      Map<String, String> parameters, Map<String, num>? tunableTrackMap) {
     if (tunableTrackMap != null) {
       parameters.addAll(tunableTrackMap.map<String, String>((k, v) =>
           MapEntry(k, v is int ? v.toString() : v.toStringAsFixed(2))));
@@ -52,9 +52,9 @@ class RecommendationsEndpoint extends EndpointBase {
   /// gets [parameters], a map of the request's uri parameters and
   /// adds an entry with [key] and value of [paramList] as comma separated list
   void _addList(
-      Map<String, String> parameters, String key, Iterable<String> paramList) {
+      Map<String, String> parameters, String key, Iterable<String>? paramList) {
     if ((paramList?.length ?? 0) > 0){
-      parameters[key] = paramList.join(',');
+      parameters[key] = paramList!.join(',');
     }
   }
 }

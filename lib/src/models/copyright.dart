@@ -10,10 +10,10 @@ class Copyright extends Object {
       _$CopyrightFromJson(json);
 
   /// The copyright text for this album.
-  String text;
+  String? text;
 
   /// The type of copyright:
   ///     C = the copyright
   ///     P = the sound recording (performance) copyright.
-  String type;
+  String? type;
 }

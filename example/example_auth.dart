@@ -1,6 +1,7 @@
 // Copyright (c) 2020 hayribakici. All rights reserved. Use of this source code
 // is governed by a BSD-style license that can be found in the LICENSE file.
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,28 +13,28 @@ const _scopes = [
   'playlist-modify-private'
 ];
 
-void main() async {
+Future<void> main() async {
   var keyJson = await File('example/.apikeys').readAsString();
   var keyMap = json.decode(keyJson);
 
   var credentials = SpotifyApiCredentials(keyMap['id'], keyMap['secret']);
-  var spotify = await _getUserAuthenticatedSpotifyApi(credentials);
+  var spotify = await (_getUserAuthenticatedSpotifyApi(credentials) as FutureOr<SpotifyApi>);
   if (spotify == null) {
     exit(0);
   }
-  await _currentlyPlaying(spotify);
-  await _devices(spotify);
-  await _followingArtists(spotify);
+  _currentlyPlaying(spotify);
+  _devices(spotify);
+  _followingArtists(spotify);
   //await _createPrivatePlaylist(spotify);
 
   exit(0);
 }
 
-Future<SpotifyApi> _getUserAuthenticatedSpotifyApi(
+Future<SpotifyApi?> _getUserAuthenticatedSpotifyApi(
     SpotifyApiCredentials credentials) async {
   print(
       'Please paste your redirect url (from your spotify application\'s redirect url):');
-  var redirect = stdin.readLineSync();
+  var redirect = stdin.readLineSync()!;
 
   var grant = SpotifyApi.authorizationCodeGrant(credentials);
   var authUri = grant.getAuthorizationUrl(Uri.parse(redirect), scopes: _scopes);
@@ -53,7 +54,7 @@ Future<SpotifyApi> _getUserAuthenticatedSpotifyApi(
 }
 
 void _currentlyPlaying(SpotifyApi spotify) async =>
-    await spotify.me.currentlyPlaying().then((a) {
+    await spotify.me!.currentlyPlaying().then((a) {
       if (a == null) {
         print('Nothing currently playing.');
         return;
@@ -62,7 +63,7 @@ void _currentlyPlaying(SpotifyApi spotify) async =>
     }).catchError(_prettyPrintError);
 
 void _devices(SpotifyApi spotify) async =>
-    await spotify.me.devices().then((devices) {
+    await spotify.me!.devices().then((devices) {
       if (devices == null) {
         print('No devices currently playing.');
         return;
@@ -72,15 +73,15 @@ void _devices(SpotifyApi spotify) async =>
     }).catchError(_prettyPrintError);
 
 void _followingArtists(SpotifyApi spotify) async {
-  var cursorPage = spotify.me.following(FollowingType.artist);
+  var cursorPage = spotify.me!.following(FollowingType.artist);
   await cursorPage.first().then((cursorPage) {
-    print(cursorPage.items.map((artist) => artist.name).join(', '));
+    print(cursorPage.items!.map((artist) => artist.name).join(', '));
   }).catchError((ex) => _prettyPrintError(ex));
 }
 
 void _createPrivatePlaylist(SpotifyApi spotify) async {
-  var user = await spotify.me.get();
-  await spotify.playlists
+  var user = await spotify.me!.get();
+  await spotify.playlists!
       .createPlaylist(
     user.id,
     'Cool New Playlist 2',

@@ -24,7 +24,7 @@ class Albums extends EndpointPaging {
     return artistsMap.map((m) => Album.fromJson(m));
   }
 
-  Pages<TrackSimple> getTracks(String albumId) {
+  Pages<TrackSimple> getTracks(String? albumId) {
     return _getPages(
         '$_path/$albumId/tracks', (json) => TrackSimple.fromJson(json));
   }

@@ -40,8 +40,8 @@ class Me extends EndpointPaging {
 
   /// Get tracks from the current user’s recently played tracks. 
   /// Note: Currently doesn’t support podcast episodes.
-  Future<Iterable<PlayHistory>> recentlyPlayed(
-      {int limit, DateTime after, DateTime before}) async {
+  Future<Iterable<PlayHistory>?> recentlyPlayed(
+      {int? limit, DateTime? after, DateTime? before}) async {
     assert(after == null || before == null,
         'Cannot specify both after and before.');
 
